@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lacak Paket - Pelacakan Konsumen V3</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --user-color: #2ecc71;
+            --bg-color: #f8f9fa;
+        }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; background-color: var(--bg-color); }
+        .container { max-width: 600px; margin: 40px auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary-color); }
+        .card { background: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--user-color); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #cccccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 6px; color: #ffffff; font-size: 1rem; font-weight: bold; cursor: pointer; background-color: var(--user-color); }
+        button:hover { background-color: #27ae60; }
+        
+        /* Box Tampilan Hasil */
+        .result-box { margin-top: 25px; padding: 20px; border-left: 4px solid #3498db; background-color: #f1f7fa; border-radius: 0 6px 6px 0; display: none; }
+        
+        /* KOTAK INFO ALAMAT & SOPIR */
+        .info-paket-box { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 15px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .info-paket-box h4 { margin: 0 0 8px 0; color: var(--primary-color); border-bottom: 1px dashed #ddd; padding-bottom: 4px; }
+        .info-paket-box table { width: 100%; margin-bottom: 10px; }
+        .info-paket-box table:last-child { margin-bottom: 0; }
+        .info-paket-box td { padding: 4px 0; vertical-align: top; }
+        
+        .status-list { list-style-type: none; padding: 0; margin: 0; }
+        .status-list li { position: relative; padding-left: 30px; margin-bottom: 15px; font-size: 0.95rem; }
+        .status-list li::before { content: "📍"; position: absolute; left: 0; top: 0; }
+        .status-time { display: block; font-size: 0.8rem; color: #888888; margin-top: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🔍 Cek Resi Pengiriman</h1>
+            <p>Lacak posisi paket, data alamat, serta kontak sopir pengantar</p>
+        </header>
+
+        <div class="card">
+            <div class="form-group">
+                <label for="userResi">Nomor Resi Paket:</label>
+                <input type="text" id="userResi" placeholder="Masukkan nomor resi Anda...">
+            </div>
+            <button onclick="lacakBarangUser()">Lacak Paket</button>
+
+            <div id="hasilTracing" class="result-box">
+                <h3 style="margin-top:0; margin-bottom: 15px;">Resi: <span id="noResiDetail" style="color: #3498db;"></span></h3>
+                
+                <div class="info-paket-box">
+                    <h4>📦 Detail Pengiriman</h4>
+                    <table>
+                        <tr><td style="width: 30%; font-weight: bold;">👤 Pengirim:</td><td id="txtPengirim">-</td></tr>
+                        <tr><td style="font-weight: bold;">🎯 Penerima:</td><td id="txtPenerima">-</td></tr>
+                        <tr><td style="font-weight: bold;">🏠 Alamat:</td><td id="txtAlamat">-</td></tr>
+                    </table>
+                </div>
+
+                <div class="info-paket-box" style="border-left: 4px solid #e67e22;">
+                    <h4>🚚 Info Sopir Pengantar</h4>
+                    <table>
+                        <tr><td style="width: 30%; font-weight: bold;">👨‍✈️ Nama Sopir:</td><td id="txtSopir">-</td></tr>
+                        <tr><td style="font-weight: bold;">📞 No. HP:</td><td id="txtHpSopir" style="color: #d35400; font-weight: bold;">-</td></tr>
+                    </table>
+                </div>
+
+                <h4 style="margin-bottom: 10px; color: var(--primary-color)">Riwayat Pengiriman:</h4>
+                <ul class="status-list" id="detailStatus"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function lacakBarangUser() {
+            const resiUser = document.getElementById('userResi').value.trim().toUpperCase();
+            const hasilBox = document.getElementById('hasilTracing');
+            const noResiDetail = document.getElementById('noResiDetail');
+            const txtPengirim = document.getElementById('txtPengirim');
+            const txtPenerima = document.getElementById('txtPenerima');
+            const txtAlamat = document.getElementById('txtAlamat');
+            const txtSopir = document.getElementById('txtSopir');
+            const txtHpSopir = document.getElementById('txtHpSopir');
+            const detailStatus = document.getElementById('detailStatus');
+
+            if (resiUser === "") {
+                alert("Silakan isi nomor resi!");
+                return;
+            }
+
+            hasilBox.style.display = "block";
+            noResiDetail.innerText = resiUser;
+            detailStatus.innerHTML = ""; 
+
+            // Mengambil data dari kunci LocalStorage yang baru (v3)
+            const dataSistem = localStorage.getItem('database_tracing_v3');
+            const db = dataSistem ? JSON.parse(dataSistem) : {};
+
+            if (db[resiUser]) {
+                // Memasukkan data ke kotak HTML masing-masing
+                txtPengirim.innerText = db[resiUser].pengirim;
+                txtPenerima.innerText = db[resiUser].penerima;
+                txtAlamat.innerText = db[resiUser].alamat;
+                txtSopir.innerText = db[resiUser].sopir;
+                txtHpSopir.innerText = db[resiUser].hpSopir;
+
+                db[resiUser].riwayat.forEach(status => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${status.teks}</strong> <span class="status-time">${status.waktu}</span>`;
+                    detailStatus.appendChild(li);
+                });
+            } else {
+                txtPengirim.innerText = "-";
+                txtPenerima.innerText = "-";
+                txtAlamat.innerText = "-";
+                txtSopir.innerText = "-";
+                txtHpSopir.innerText = "-";
+                detailStatus.innerHTML = `<li style="color: #e74c3c; list-style: none;">❌ Nomor resi tidak ditemukan.</li>`;
+            }
+        }
+    </script>
+</body>
+</html>
