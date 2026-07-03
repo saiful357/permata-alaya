@@ -3,84 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - Mobile Friendly</title>
+    <title>Panel Admin - Mobile Friendly (FIXED)</title>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <style>
         :root { --primary-color: #2c3e50; --admin-color: #e67e22; --bg-color: #f8f9fa; }
-        
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            margin: 0; 
-            padding: 10px; 
-            background-color: var(--bg-color); 
-        }
-        
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; background-color: var(--bg-color); }
         .container { max-width: 100%; margin: 0 auto; }
-        
         header { text-align: center; margin-bottom: 20px; }
         header h1 { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 5px; }
         header p { font-size: 0.9rem; margin-top: 0; color: #666; }
-        
-        .card { 
-            background: #ffffff; 
-            border-radius: 8px; 
-            padding: 15px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
-            border-top: 5px solid var(--admin-color); 
-        }
-        
+        .card { background: #ffffff; border-radius: 8px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 5px solid var(--admin-color); }
         .form-group { margin-bottom: 12px; }
-        
-        .form-row { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            margin-bottom: 12px; 
-        }
-        
+        .form-row { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
         label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.85rem; }
-        
-        input[type="text"], textarea { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #cccccc; 
-            border-radius: 6px; 
-            box-sizing: border-box; 
-            font-size: 1rem; 
-        }
-        
+        input[type="text"], textarea { width: 100%; padding: 12px; border: 1px solid #cccccc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         textarea { resize: vertical; height: 65px; }
-        
-        button { 
-            width: 100%; 
-            padding: 15px; 
-            border: none; 
-            border-radius: 6px; 
-            color: #ffffff; 
-            font-size: 1rem; 
-            font-weight: bold; 
-            cursor: pointer; 
-            background-color: var(--admin-color); 
-            box-shadow: 0 3px 6px rgba(230, 126, 34, 0.3);
-        }
+        button { width: 100%; padding: 15px; border: none; border-radius: 6px; color: #ffffff; font-size: 1rem; font-weight: bold; cursor: pointer; background-color: var(--admin-color); box-shadow: 0 3px 6px rgba(230, 126, 34, 0.3); }
         button:active { background-color: #d35400; }
-        
         .db-section { margin-top: 25px; background: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .db-section h2 { font-size: 1.2rem; margin-top: 0; }
-        
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch;
-        }
-        
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 500px; }
         th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eeeeee; font-size: 0.85rem; }
         th { background-color: #f4f6f8; color: var(--primary-color); }
-        
         .btn-print { background: #3498db; color: white; padding: 8px 15px; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-
         @media (min-width: 600px) {
             body { padding: 20px; }
             header h1 { font-size: 2rem; }
@@ -88,7 +37,6 @@
             .form-row { flex-direction: row; gap: 10px; }
             th, td { font-size: 0.95rem; padding: 12px; }
         }
-
         @media print {
             body { background: white; color: black; padding: 0; }
             header, .card, .btn-print { display: none !important; }
@@ -170,70 +118,76 @@
     </div>
 
     <script>
-// 2. TARUH FIREBASE CONFIG DI SINI (Di dalam tag script)
+        // !!! SILAKAN INPUT DATA KUNCI DATABASE FIREBASE ANDA DI SINI !!!
         const firebaseConfig = {
-            apiKey: "PASTE_API_KEY_DI_SINI",
-            authDomain: "PASTE_DOMAIN_DI_SINI",
-            databaseURL: "PASTE_DATABASE_URL_DI_SINI",
-            projectId: "PASTE_PROJECT_ID_DI_SINI",
-            storageBucket: "PASTE_BUCKET_DI_SINI",
-            messagingSenderId: "PASTE_SENDER_ID_DI_SINI",
-            appId: "PASTE_APP_ID_DI_SINI"
+            apiKey: "// >>> GANTI DI SINI <<<",
+            authDomain: "// >>> GANTI DI SINI <<<",
+            databaseURL: "// >>> GANTI DI SINI <<<",
+            projectId: "// >>> GANTI DI SINI <<<",
+            storageBucket: "// >>> GANTI DI SINI <<<",
+            messagingSenderId: "// >>> GANTI DI SINI <<<",
+            appId: "// >>> GANTI DI SINI <<<"
         };
         
-        // Inisialisasi Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        // Memulai Koneksi Firebase (Hanya jika config sudah diisi)
+        if (firebaseConfig.apiKey !== "// >>> GANTI DI SINI <<<") {
+            firebase.initializeApp(firebaseConfig);
+            var database = firebase.database();
 
-        // ... Di bawah ini baru fungsi database.ref('resi_barang').on(...) ...
-        // ... Dan fungsi simpanStatusBaru() ...
+            // Mengambil data untuk tabel real-time
+            database.ref('resi_barang').on('value', function(snapshot) {
+                var db = snapshot.val() || {};
+                var tabelBody = document.getElementById('tabelDatabase');
+                tabelBody.innerHTML = "";
+                var daftarResi = Object.keys(db);
+                
+                if (daftarResi.length === 0) {
+                    tabelBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">Belum ada data di server.</td></tr>';
+                    return;
+                }
 
-        // Mengambil data realtime untuk tabel monitor admin
-        database.ref('resi_barang').on('value', (snapshot) => {
-            const db = snapshot.val() || {};
-            const tabelBody = document.getElementById('tabelDatabase');
-            tabelBody.innerHTML = "";
-            const daftarResi = Object.keys(db);
-            
-            if (daftarResi.length === 0) {
-                tabelBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999;">Belum ada data di server.</td></tr>`;
+                daftarResi.forEach(function(resi) {
+                    var baris = document.createElement('tr');
+                    var listStatusHtml = "";
+                    if(db[resi].riwayat) {
+                        listStatusHtml = Object.values(db[resi].riwayat).map(function(item) {
+                            return '• [' + item.waktu + '] ' + item.teks;
+                        }).join('<br>');
+                    }
+                    baris.innerHTML = 'Layout' +
+                        '<td style="font-weight: bold; color: #2c3e50;">' + resi + '</td>' +
+                        '<td><strong>Fr:</strong> ' + db[resi].pengirim + '<br><strong>To:</strong> ' + db[resi].penerima + '<br><strong>Alamat:</strong> ' + db[resi].alamat + '</td>' +
+                        '<td><strong>Nama:</strong> ' + db[resi].sopir + '<br><strong>HP:</strong> ' + db[resi].hpSopir + '</td>' +
+                        '<td>' + listStatusHtml + '</td>';
+                    tabelBody.appendChild(baris);
+                });
+            });
+        }
+
+        // Fungsi Utama Tombol Simpan
+        function simpanStatusBaru() {
+            if (!database) {
+                alert("Eror: Firebase belum dikonfigurasi dengan benar. Silakan cek baris kode firebaseConfig Anda!");
                 return;
             }
 
-            daftarResi.forEach(resi => {
-                const baris = document.createElement('tr');
-                let listStatusHtml = "";
-                if(db[resi].riwayat) {
-                    listStatusHtml = Object.values(db[resi].riwayat).map(item => `• [${item.waktu}] ${item.teks}`).join('<br>');
-                }
-                baris.innerHTML = `
-                    <td style="font-weight: bold; color: #2c3e50;">${resi}</td>
-                    <td><strong>Fr:</strong> ${db[resi].pengirim}<br><strong>To:</strong> ${db[resi].penerima}<br><strong>Alamat:</strong> ${db[resi].alamat}</td>
-                    <td><strong>Nama:</strong> ${db[resi].sopir}<br><strong>HP:</strong> ${db[resi].hpSopir}</td>
-                    <td>${listStatusHtml}</td>
-                `;
-                tabelBody.appendChild(baris);
-            });
-        });
-
-        function simpanStatusBaru() {
-            const resi = document.getElementById('adminResi').value.trim().toUpperCase();
-            const pengirim = document.getElementById('adminPengirim').value.trim();
-            const penerima = document.getElementById('adminPenerima').value.trim();
-            const alamat = document.getElementById('adminAlamat').value.trim();
-            const sopir = document.getElementById('adminSopir').value.trim();
-            const hpSopir = document.getElementById('adminHpSopir').value.trim();
-            const statusBaru = document.getElementById('adminStatus').value.trim();
+            var resi = document.getElementById('adminResi').value.trim().toUpperCase();
+            var pengirim = document.getElementById('adminPengirim').value.trim();
+            var penerima = document.getElementById('adminPenerima').value.trim();
+            var alamat = document.getElementById('adminAlamat').value.trim();
+            var sopir = document.getElementById('adminSopir').value.trim();
+            var hpSopir = document.getElementById('adminHpSopir').value.trim();
+            var statusBaru = document.getElementById('adminStatus').value.trim();
 
             if (resi === "" || statusBaru === "") {
                 alert("Nomor resi dan Status wajib diisi!");
                 return;
             }
 
-            database.ref('resi_barang/' + resi).once('value').then((snapshot) => {
-                const dataLama = snapshot.val() || {};
+            database.ref('resi_barang/' + resi).once('value').then(function(snapshot) {
+                var dataLama = snapshot.val() || {};
                 
-                const dataUpdate = {
+                var dataUpdate = {
                     pengirim: pengirim || dataLama.pengirim || "Tidak Diketahui",
                     penerima: penerima || dataLama.penerima || "Tidak Diketahui",
                     alamat: alamat || dataLama.alamat || "Tidak Diketahui",
@@ -241,24 +195,25 @@
                     hpSopir: hpSopir || dataLama.hpSopir || "-"
                 };
 
-                const sekarang = new Date();
-                const formatWaktu = sekarang.toLocaleDateString('id-ID') + " " + sekarang.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                var sekarang = new Date();
+                var formatWaktu = sekarang.toLocaleDateString('id-ID') + " " + sekarang.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
 
                 database.ref('resi_barang/' + resi).update(dataUpdate);
-                
                 database.ref('resi_barang/' + resi + '/riwayat').push({
                     waktu: formatWaktu,
                     teks: statusBaru
                 });
 
-                alert(`Sukses memperbarui resi ${resi}!`);
+                alert("Sukses memperbarui resi " + resi + "!");
                 
-                // MENGOSONGKAN KOTAK INPUT SETELAH SIMPAN SUKSES (Data Sopir tetap agar tidak capek ketik ulang)
+                // Mengosongkan input otomatis setelah sukses
                 document.getElementById('adminResi').value = "";
                 document.getElementById('adminPengirim').value = "";
                 document.getElementById('adminPenerima').value = "";
                 document.getElementById('adminAlamat').value = "";
                 document.getElementById('adminStatus').value = "";
+            }).catch(function(error) {
+                alert("Gagal menyimpan data ke cloud: " + error.message);
             });
         }
     </script>
