@@ -170,7 +170,7 @@
     </div>
 
     <script>
-        // !!! MASUKKAN KODE KONFIGURASI FIREBASE ANDA DI SINI !!!
+// 2. TARUH FIREBASE CONFIG DI SINI (Di dalam tag script)
         const firebaseConfig = {
             apiKey: "PASTE_API_KEY_DI_SINI",
             authDomain: "PASTE_DOMAIN_DI_SINI",
@@ -181,8 +181,12 @@
             appId: "PASTE_APP_ID_DI_SINI"
         };
         
+        // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
+        // ... Di bawah ini baru fungsi database.ref('resi_barang').on(...) ...
+        // ... Dan fungsi simpanStatusBaru() ...
 
         // Mengambil data realtime untuk tabel monitor admin
         database.ref('resi_barang').on('value', (snapshot) => {
