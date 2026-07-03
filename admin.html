@@ -3,60 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - Tracing Barang V3 (Dengan Fitur Print)</title>
+    <title>Panel Admin - Mobile Friendly</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --admin-color: #e67e22;
-            --bg-color: #f8f9fa;
+        :root { --primary-color: #2c3e50; --admin-color: #e67e22; --bg-color: #f8f9fa; }
+        
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 10px; 
+            background-color: var(--bg-color); 
         }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; background-color: var(--bg-color); }
-        .container { max-width: 900px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { color: var(--primary-color); }
-        .card { background: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--admin-color); }
-        .form-group { margin-bottom: 15px; }
-        .form-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .form-row .form-group { flex: 1; margin-bottom: 0; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
-        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #cccccc; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; }
-        textarea { resize: vertical; height: 60px; }
         
-        /* Tombol Utama Admin */
-        button { width: 100%; padding: 14px; border: none; border-radius: 6px; color: #ffffff; font-size: 1rem; font-weight: bold; cursor: pointer; background-color: var(--admin-color); }
-        button:hover { background-color: #d35400; }
+        .container { max-width: 100%; margin: 0 auto; }
         
-        /* Seksi Database */
-        .db-section { margin-top: 30px; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eeeeee; font-size: 0.9rem; }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 5px; }
+        header p { font-size: 0.9rem; margin-top: 0; color: #666; }
+        
+        .card { 
+            background: #ffffff; 
+            border-radius: 8px; 
+            padding: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            border-top: 5px solid var(--admin-color); 
+        }
+        
+        .form-group { margin-bottom: 12px; }
+        
+        .form-row { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin-bottom: 12px; 
+        }
+        
+        label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.85rem; }
+        
+        input[type="text"], textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #cccccc; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 1rem; 
+        }
+        
+        textarea { resize: vertical; height: 65px; }
+        
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 6px; 
+            color: #ffffff; 
+            font-size: 1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            background-color: var(--admin-color); 
+            box-shadow: 0 3px 6px rgba(230, 126, 34, 0.3);
+        }
+        button:active { background-color: #d35400; }
+        
+        .db-section { margin-top: 25px; background: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .db-section h2 { font-size: 1.2rem; margin-top: 0; }
+        
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 500px; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eeeeee; font-size: 0.85rem; }
         th { background-color: #f4f6f8; color: var(--primary-color); }
         
-        /* Tombol Aksi Tambahan */
-        .btn-danger { background: #e74c3c; color: white; padding: 6px 12px; border: none; border-radius: 4px; width: auto; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-        .btn-print { background: #3498db; color: white; padding: 6px 12px; border: none; border-radius: 4px; width: auto; font-size: 0.8rem; font-weight: bold; cursor: pointer; margin-right: 5px; }
-        .btn-print:hover { background: #2980b9; }
-        .link-nav { display: inline-block; margin-bottom: 20px; color: #3498db; text-decoration: none; font-weight: bold; }
+        .btn-print { background: #3498db; color: white; padding: 8px 15px; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
 
-        /* ======================== TRIK CSS UNTUK PRINT PDF ======================== */
+        @media (min-width: 600px) {
+            body { padding: 20px; }
+            header h1 { font-size: 2rem; }
+            .card { padding: 30px; }
+            .form-row { flex-direction: row; gap: 10px; }
+            th, td { font-size: 0.95rem; padding: 12px; }
+        }
+
         @media print {
-            /* Sembunyikan semua elemen kecuali area tabel database (.db-section) */
             body { background: white; color: black; padding: 0; }
-            header, .link-nav, .card, .btn-print, .btn-danger {
-                display: none !important;
-            }
-            .db-section {
-                box-shadow: none !important;
-                margin-top: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
-            }
-            th {
-                background-color: #eee !important;
-                color: black !important;
-                -webkit-print-color-adjust: exact; /* Memastikan warna background th ikut tercetak */
-                print-color-adjust: exact;
-            }
+            header, .card, .btn-print { display: none !important; }
+            .db-section { box-shadow: none !important; margin-top: 0 !important; padding: 0 !important; }
+            table { min-width: 100%; }
+            th { background-color: #eee !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -64,11 +102,9 @@
 
     <div class="container">
         <header>
-            <h1>🛠️ Panel Utama Admin</h1>
-            <p>Input detail paket, data sopir, dan update status perjalanan</p>
+            <h1>🛠️ Panel Admin Tracking</h1>
+            <p>Input data & update status langsung lewat HP Anda</p>
         </header>
-
-        <a href="user.html" class="link-nav" target="_blank">👁️ Buka Halaman Cek Resi (User) &rarr;</a>
 
         <div class="card">
             <div class="form-group">
@@ -79,96 +115,102 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="adminPengirim">Nama Pengirim:</label>
-                    <input type="text" id="adminPengirim" placeholder="Nama Toko / Pengirim">
+                    <input type="text" id="adminPengirim" placeholder="Nama Toko">
                 </div>
                 <div class="form-group">
                     <label for="adminPenerima">Nama Penerima:</label>
-                    <input type="text" id="adminPenerima" placeholder="Nama Penerima">
+                    <input type="text" id="adminPenerima" placeholder="Nama Pembeli">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="adminAlamat">Alamat Lengkap Penerima:</label>
-                <textarea id="adminAlamat" placeholder="Contoh: Jl. Merdeka No. 10, Jakarta Pusat"></textarea>
+                <textarea id="adminAlamat" placeholder="Alamat tujuan pengiriman..."></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="adminSopir">Nama Sopir / Kurir:</label>
-                    <input type="text" id="adminSopir" placeholder="Contoh: Budi Santoso">
+                    <input type="text" id="adminSopir" placeholder="Nama Sopir">
                 </div>
                 <div class="form-group">
                     <label for="adminHpSopir">No. HP Sopir:</label>
-                    <input type="text" id="adminHpSopir" placeholder="Contoh: 08123456789">
+                    <input type="text" id="adminHpSopir" placeholder="Contoh: 0812345...">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="adminStatus">Status / Posisi Paket Terbaru:</label>
-                <textarea id="adminStatus"> Paket sedang dibawa sopir menuju alamat tujuan </textarea>
+                <textarea id="adminStatus" placeholder="Ketik posisi paket saat ini..."></textarea>
             </div>
             
-            <button onclick="simpanStatusBaru()">Simpan Update Data</button>
+            <button onclick="simpanStatusBaru()">Simpan ke Cloud Server</button>
         </div>
 
         <div class="db-section">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>📁 Log Database Sistem</h2>
-                <div>
-                    <button class="btn-print" onclick="cetakPDF()">🖨️ Cetak PDF</button>
-                    <button class="btn-danger" onclick="hapusSemuaData()">Kosongkan Semua Data</button>
-                </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>📁 Monitor Cloud Realtime</h2>
+                <button class="btn-print" onclick="window.print()">🖨️ Cetak</button>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 15%;">Resi</th>
-                        <th style="width: 25%;">Detail Paket & Alamat</th>
-                        <th style="width: 20%;">Info Sopir</th>
-                        <th style="width: 40%;">Riwayat Perjalanan</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelDatabase"></tbody>
-            </table>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resi</th>
+                            <th>Detail Paket</th>
+                            <th>Sopir</th>
+                            <th>Riwayat Perjalanan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelDatabase"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        function dapatkanDatabase() {
-            const dataSistem = localStorage.getItem('database_tracing_v3');
-            return dataSistem ? JSON.parse(dataSistem) : {};
-        }
+        // !!! MASUKKAN KODE KONFIGURASI FIREBASE ANDA DI SINI !!!
+        const firebaseConfig = {
+            apiKey: "PASTE_API_KEY_DI_SINI",
+            authDomain: "PASTE_DOMAIN_DI_SINI",
+            databaseURL: "PASTE_DATABASE_URL_DI_SINI",
+            projectId: "PASTE_PROJECT_ID_DI_SINI",
+            storageBucket: "PASTE_BUCKET_DI_SINI",
+            messagingSenderId: "PASTE_SENDER_ID_DI_SINI",
+            appId: "PASTE_APP_ID_DI_SINI"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-        function perbaruiTampilanTabel() {
-            const db = dapatkanDatabase();
+        // Mengambil data realtime untuk tabel monitor admin
+        database.ref('resi_barang').on('value', (snapshot) => {
+            const db = snapshot.val() || {};
             const tabelBody = document.getElementById('tabelDatabase');
             tabelBody.innerHTML = "";
             const daftarResi = Object.keys(db);
             
             if (daftarResi.length === 0) {
-                tabelBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999;">Belum ada resi yang dibuat.</td></tr>`;
+                tabelBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999;">Belum ada data di server.</td></tr>`;
                 return;
             }
 
             daftarResi.forEach(resi => {
                 const baris = document.createElement('tr');
-                const listStatusHtml = db[resi].riwayat.map(item => `• [${item.waktu}] ${item.teks}`).join('<br>');
+                let listStatusHtml = "";
+                if(db[resi].riwayat) {
+                    listStatusHtml = Object.values(db[resi].riwayat).map(item => `• [${item.waktu}] ${item.teks}`).join('<br>');
+                }
                 baris.innerHTML = `
                     <td style="font-weight: bold; color: #2c3e50;">${resi}</td>
-                    <td>
-                        <strong>Fr:</strong> ${db[resi].pengirim}<br>
-                        <strong>To:</strong> ${db[resi].penerima}<br>
-                        <strong>Alamat:</strong> ${db[resi].alamat}
-                    </td>
-                    <td>
-                        <strong>Nama:</strong> ${db[resi].sopir}<br>
-                        <strong>HP:</strong> ${db[resi].hpSopir}
-                    </td>
+                    <td><strong>Fr:</strong> ${db[resi].pengirim}<br><strong>To:</strong> ${db[resi].penerima}<br><strong>Alamat:</strong> ${db[resi].alamat}</td>
+                    <td><strong>Nama:</strong> ${db[resi].sopir}<br><strong>HP:</strong> ${db[resi].hpSopir}</td>
                     <td>${listStatusHtml}</td>
                 `;
                 tabelBody.appendChild(baris);
             });
-        }
+        });
 
         function simpanStatusBaru() {
             const resi = document.getElementById('adminResi').value.trim().toUpperCase();
@@ -184,48 +226,37 @@
                 return;
             }
 
-            const db = dapatkanDatabase();
-
-            if (!db[resi]) {
-                db[resi] = {
-                    pengirim: pengirim || "Tidak Diketahui",
-                    penerima: penerima || "Tidak Diketahui",
-                    alamat: alamat || "Tidak Diketahui",
-                    sopir: sopir || "Belum Ditugaskan",
-                    hpSopir: hpSopir || "-",
-                    riwayat: []
+            database.ref('resi_barang/' + resi).once('value').then((snapshot) => {
+                const dataLama = snapshot.val() || {};
+                
+                const dataUpdate = {
+                    pengirim: pengirim || dataLama.pengirim || "Tidak Diketahui",
+                    penerima: penerima || dataLama.penerima || "Tidak Diketahui",
+                    alamat: alamat || dataLama.alamat || "Tidak Diketahui",
+                    sopir: sopir || dataLama.sopir || "Belum Ditugaskan",
+                    hpSopir: hpSopir || dataLama.hpSopir || "-"
                 };
-            } else {
-                if(pengirim !== "") db[resi].pengirim = pengirim;
-                if(penerima !== "") db[resi].penerima = penerima;
-                if(alamat !== "") db[resi].alamat = alamat;
-                if(sopir !== "") db[resi].sopir = sopir;
-                if(hpSopir !== "") db[resi].hpSopir = hpSopir;
-            }
 
-            const sekarang = new Date();
-            const formatWaktu = sekarang.toLocaleDateString('id-ID') + " " + sekarang.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                const sekarang = new Date();
+                const formatWaktu = sekarang.toLocaleDateString('id-ID') + " " + sekarang.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
 
-            db[resi].riwayat.unshift({ waktu: formatWaktu, teks: statusBaru });
-            localStorage.setItem('database_tracing_v3', JSON.stringify(db));
+                database.ref('resi_barang/' + resi).update(dataUpdate);
+                
+                database.ref('resi_barang/' + resi + '/riwayat').push({
+                    waktu: formatWaktu,
+                    teks: statusBaru
+                });
 
-            alert(`Sukses memperbarui resi: ${resi}`);
-            document.getElementById('adminStatus').value = "";
-            perbaruiTampilanTabel();
+                alert(`Sukses memperbarui resi ${resi}!`);
+                
+                // MENGOSONGKAN KOTAK INPUT SETELAH SIMPAN SUKSES (Data Sopir tetap agar tidak capek ketik ulang)
+                document.getElementById('adminResi').value = "";
+                document.getElementById('adminPengirim').value = "";
+                document.getElementById('adminPenerima').value = "";
+                document.getElementById('adminAlamat').value = "";
+                document.getElementById('adminStatus').value = "";
+            });
         }
-
-        // FUNGSI JAVASCRIPT UNTUK MEMANGGIL JENDELA PRINT PDF BROWSER
-        function cetakPDF() {
-            window.print();
-        }
-
-        function hapusSemuaData() {
-            if (confirm("Hapus semua data?")) {
-                localStorage.removeItem('database_tracing_v3');
-                perbaruiTampilanTabel();
-            }
-        }
-        perbaruiTampilanTabel();
     </script>
 </body>
 </html>
